@@ -5,7 +5,7 @@ body {
 }
 
 .card {
-  width: 10%;
+  width: 125px;
 }
 
 .board {
@@ -25,4 +25,21 @@ body {
 
 img {
   margin: 10px;
+}
+
+button {
+  color: white;
+  background-color: black;
+  font-style: bold;
+  font-size: larger;
+  padding: 1rem;
+  border-radius: 1rem;
+  margin: 0 1rem;
+}
+
+label {
+  color: white;
+  font-size: larger;
+  font-style: bolder;
+  font-family: Tahoma;
 }

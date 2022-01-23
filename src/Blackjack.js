@@ -160,7 +160,6 @@ function Blackjack() {
     }
 
     setDealerScore(curDealerScore);
-    console.log(curDealerScore);
   }
 
   function stand() {
@@ -171,7 +170,7 @@ function Blackjack() {
     <>
       <div className="board">
         <div className="hand">
-          <Hand hand={dealerHand} />
+          <Hand status={result} hand={dealerHand} />
         </div>
         <div>
           {result === "In progress" ? (
