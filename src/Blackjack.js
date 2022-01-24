@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Hand from "./Hand.js";
 import "./style.css";
 
@@ -10,6 +10,27 @@ function Blackjack() {
   const [playerScore, setPlayerScore] = useState(0);
   const [dealerScore, setDealerScore] = useState(0);
 
+  const playerRef = useRef();
+  const dealerRef = useRef();
+  playerRef.current = playerScore;
+  dealerRef.current = dealerScore;
+
+  const checkResult = useRef((stand = false) => {
+    if (playerRef.current > 21) {
+      setResult("Bust");
+    }
+
+    if (stand) {
+      if (playerRef.current > dealerRef.current || dealerRef.current > 21) {
+        setResult("You Won!");
+      } else if (playerRef.current === dealerRef.current) {
+        setResult("Push");
+      } else {
+        setResult("You Lost");
+      }
+    }
+  });
+
   useEffect(() => {
     let curScore = calcScore(playerHand);
 
@@ -18,12 +39,12 @@ function Blackjack() {
 
   useEffect(() => {
     if (playerScore === 0) return;
-    checkResult();
+    checkResult.current();
   }, [playerScore]);
 
   useEffect(() => {
     if (dealerScore === 0) return;
-    checkResult(true);
+    checkResult.current(true);
   }, [dealerScore]);
 
   function calcScore(hand) {
@@ -87,22 +108,6 @@ function Blackjack() {
     setDeck(newDeck);
 
     return newDeck;
-  }
-
-  function checkResult(stand = false) {
-    if (playerScore > 21) {
-      setResult("Bust");
-    }
-
-    if (stand) {
-      if (playerScore > dealerScore || dealerScore > 21) {
-        setResult("You Won!");
-      } else if (playerScore === dealerScore) {
-        setResult("Push");
-      } else {
-        setResult("You Lost");
-      }
-    }
   }
 
   function deal() {
