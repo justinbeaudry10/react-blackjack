@@ -2,9 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import Hand from "./Hand.js";
 import "./style.css";
 
+const LOCAL_STORAGE_KEY = "blackjack.credits";
+
 function Blackjack() {
   const [result, setResult] = useState("");
   const [deck, setDeck] = useState([]);
+  const [credits, setCredits] = useState(10);
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
   const [playerScore, setPlayerScore] = useState(0);
@@ -12,24 +15,41 @@ function Blackjack() {
 
   const playerRef = useRef();
   const dealerRef = useRef();
+  const creditsRef = useRef();
   playerRef.current = playerScore;
   dealerRef.current = dealerScore;
+  creditsRef.current = credits;
 
   const checkResult = useRef((stand = false) => {
+    let newCredits = creditsRef.current;
+    console.log(newCredits);
+
     if (playerRef.current > 21) {
       setResult("Bust");
     }
 
     if (stand) {
       if (playerRef.current > dealerRef.current || dealerRef.current > 21) {
+        newCredits += 2;
+        setCredits(newCredits);
         setResult("You Won!");
       } else if (playerRef.current === dealerRef.current) {
+        setCredits(++newCredits);
         setResult("Push");
       } else {
         setResult("You Lost");
       }
     }
   });
+
+  useEffect(() => {
+    const storedCredits = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
+    if (storedCredits) setCredits(storedCredits);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(credits));
+  }, [credits]);
 
   useEffect(() => {
     let curScore = calcScore(playerHand);
@@ -111,6 +131,14 @@ function Blackjack() {
   }
 
   function deal() {
+    let newCredits = credits;
+
+    if (newCredits <= 0) {
+      setResult("Out of credits!");
+      return;
+    }
+    setCredits(--newCredits);
+
     let curDeck = resetDeck();
 
     let player = [];
@@ -171,9 +199,15 @@ function Blackjack() {
     dealerHit();
   }
 
+  function addCredits() {
+    setCredits(10);
+    setResult("Credits added!");
+  }
+
   return (
     <>
       <div className="board">
+        <label id="credits">Credits: {credits}</label>
         <div className="hand">
           <Hand status={result} hand={dealerHand} />
         </div>
@@ -192,6 +226,11 @@ function Blackjack() {
           )}
         </div>
         {result === "In progress" ? null : <label>{result}</label>}
+        {credits === 0 && result === "Out of credits!" ? (
+          <button key="addCredits" onClick={addCredits}>
+            Add Credits
+          </button>
+        ) : null}
         <label>Current Score: {playerScore}</label>
         <div className="hand">
           <Hand hand={playerHand} />
