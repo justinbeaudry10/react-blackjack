@@ -2,6 +2,10 @@
 
 Deployed at: https://blackjack-justinbeaudry.netlify.app/
 
+## PLEASE NOTE
+
+If the Ace of Diamonds is not displaying on your browser, it is because you have AdBlock on. 
+
 ## About
 
 This is a front-end web application created using React functional components and hooks. It allows the user to play games of Blackjack vs the computer "dealer". The application will also keep track of the user's credits, an alternative to using real currency.
